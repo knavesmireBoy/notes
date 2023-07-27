@@ -15,9 +15,11 @@ const notes = [];
     else throw new Error(`Note ${key} does not exist`);
   }
   async destroy(key) {
-    if (notes[key]) {
-      delete notes[key];
-    } else throw new Error(`Note ${key} does not exist`);
+    let k = key.trim();
+    console.log('god', notes, key, key.trim());
+    if (notes[k]) {
+      delete notes[k];
+    } else throw new Error(`Note ${k} does not exist`);
   }
   async keylist() {
     return Object.keys(notes);

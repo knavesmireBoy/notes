@@ -1,6 +1,12 @@
 import { port } from "./app.mjs";
 import { server } from "./app.mjs";
 
+import * as util from 'util';
+
+import { default as DBG } from 'debug';
+const debug = DBG('notes:debug');
+const dbgerror = DBG('notes:error');
+
 export function normalizePort(val) {
   const port = parseInt(val, 10);
   if (isNaN(port)) {
@@ -13,6 +19,7 @@ export function normalizePort(val) {
 }
 
 export function onError(error) {
+  dbgerror(error);
   if (error.syscall !== "listen") {
     throw error;
   }
@@ -31,11 +38,22 @@ export function onError(error) {
   }
 }
 
+
+/*
 export function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   console.log(`Listening on ${bind}`);
 }
+*/
+
+export function onListening() {
+  const addr = server.address();
+  const bind = typeof addr === 'string'
+  ? 'pipe ' + addr
+  : 'port ' + addr.port;
+  debug(`Listening on ${bind}`);
+  }
 
 export function handle404(req, res, next) {
   const err = new Error("Not Found");
@@ -55,3 +73,12 @@ export function basicErrorHandler(err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 }
+
+process.on('uncaughtException', function(err) {
+  console.error(`I've crashed!!! - ${(err.stack || err)}`);
+  });
+
+  process.on('unhandledRejection', (reason, p) => {
+  console.error(`Unhandled Rejection at: ${util.inspect(p)} reason:
+  ${reason}`);
+  });

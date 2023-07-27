@@ -48,32 +48,43 @@ router.get("/view", async (req, res, next) => {
   }
 });
 // Edit note (update)
-router.get('/edit', async (req, res, next) => {
-    try {
-        let note = await notes.read(req.query.key);
-        res.render('noteedit', {
-            title: note ? ("Edit " + note.title) : "Add a Note",
-            docreate: false,
-            notekey: req.query.key,
-            note: note
-        });
-    } catch (err) { next(err); }
+router.get("/edit", async (req, res, next) => {
+  try {
+    let note = await notes.read(req.query.key);
+    res.render("noteedit", {
+      title: note ? "Edit " + note.title : "Add a Note",
+      docreate: false,
+      notekey: req.query.key,
+      note: note,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 // Ask to Delete note (destroy)
-router.get('/destroy', async (req, res, next) => {
-    try {
+router.get("/destroy", async (req, res, next) => {
+  try {
     const note = await notes.read(req.query.key);
-    res.render('notedestroy', {
-    title: note ? note.title : "",
-    notekey: req.query.key, note: note
+    res.render("notedestroy", {
+      title: note ? `Delete ${note.title}` : "",
+      notekey: req.query.key,
+      note: note,
     });
-    } catch (err) { next(err); }
-    });
+  } catch (err) {
+    next(err);
+  }
+});
 
-    // Really destroy note (destroy)
-router.post('/destroy/confirm', async (req, res, next) => {
-    try {
+// Really destroy note (destroy)
+router.post("/destroy/confirm", async (req, res, next) => {
+  try {
+        console.log('so key is:' + req.body.notekey);
+
     await notes.destroy(req.body.notekey);
-    res.redirect('/');
-    } catch (err) { next(err); }
-    });
+    res.redirect("/");
+  } catch (err) {
+     console.log('so error:' + err);
+    next(err);
+    res.redirect("https://www.bbc.co.uk");
+  }
+});

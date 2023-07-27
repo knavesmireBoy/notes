@@ -6,12 +6,21 @@
     "start": "cross-env DEBUG=notes:* node ./app.mjs"
   },
   "dependencies": {
+    "bootstrap": "4.5.x",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.3",
     "debug": "~2.6.9",
     "express": "^4.18.2",
+    "feather-icons": "4.25.x",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1"
+    "jquery": "3.5.x",
+    "morgan": "~1.9.1",
+    "nodemon": "^3.0.1",
+    "popper.js": "1.16.x",
+    "rotating-file-stream": "^3.1.1"
+  },
+  "devDependencies": {
+    "capture-console": "^1.0.1"
   }
 }
