@@ -16,7 +16,6 @@ const notes = [];
   }
   async destroy(key) {
     let k = key.trim();
-    console.log('god', notes, key, key.trim());
     if (notes[k]) {
       delete notes[k];
     } else throw new Error(`Note ${k} does not exist`);
