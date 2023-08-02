@@ -77,12 +77,12 @@ router.get("/destroy", async (req, res, next) => {
 // Really destroy note (destroy)
 router.post("/destroy/confirm", async (req, res, next) => {
   try {
-        console.log('so key is:' + req.body.notekey);
 
     await notes.destroy(req.body.notekey);
+    console.log(44, req.body);
+
     res.redirect("/");
   } catch (err) {
-     console.log('so error:' + err);
     next(err);
     res.redirect("https://www.bbc.co.uk");
   }

@@ -1,5 +1,6 @@
 import { port } from "./app.mjs";
 import { server } from "./app.mjs";
+import { NotesStore } from "./models/notes-store.mjs";
 
 import * as util from "util";
 
@@ -31,6 +32,10 @@ export function onError(error) {
       break;
     case "EADDRINUSE":
       console.error(`${bind} is already in use`);
+      process.exit(1);
+      break;
+    case "ENOENT":
+      console.error(`why `, error.error);
       process.exit(1);
       break;
     case "ENOTESSTORE":
@@ -85,4 +90,17 @@ process.on("uncaughtException", function (err) {
 process.on("unhandledRejection", (reason, p) => {
   console.error(`Unhandled Rejection at: ${util.inspect(p)} reason:
   ${reason}`);
+});
+
+async function catchProcessDeath() {
+  debug("urk...");
+  await NotesStore.close();
+  await server.close();
+  process.exit(0);
+}
+process.on("SIGTERM", catchProcessDeath);
+process.on("SIGINT", catchProcessDeath);
+process.on("SIGHUP", catchProcessDeath);
+process.on("exit", () => {
+  debug("exiting...");
 });

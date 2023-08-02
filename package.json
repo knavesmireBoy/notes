@@ -1,28 +1,46 @@
 {
-  "name": "notes",
-  "version": "0.0.0",
+  "name": "notes1",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "cross-env DEBUG=notes:* node ./app.mjs",
-    "fs-start": "cross-env DEBUG=notes:* PORT=3000 NOTES_MODEL=fs node./app.mjs",
+    "fs-start": "cross-env DEBUG=notes:* PORT=3000 NOTES_MODEL=fs node ./app.mjs",
     "fs-server1": "cross-env NOTES_MODEL=fs PORT=3001 node ./app.mjs",
-    "fs-server2": "cross-env NOTES_MODEL=fs PORT=3002 node ./app.mjs"
+    "fs-server2": "cross-env NOTES_MODEL=fs PORT=3002 node ./app.mjs",
+    "level-start": "cross-env DEBUG=notes:* PORT=3000 NOTES_MODEL=level node ./app.mjs",
+    "sqlite3-setup": "sqlite3 notes.sqlite3 --init models/schema-sqlite3.sql",
+    "sqlite3-start": "cross-env  SQLITE_FILE=notes.sqlite3 DEBUG=notes:* NOTES_MODEL=sqlite3 node ./app.mjs",
+    "sqlite3-server1": "cross-env SQLITE_FILE=notes.sqlite3 NOTES_MODEL=sqlite3 PORT=3001 node ./app.mjs",
+    "sqlite3-server2": "cross-env SQLITE_FILE=notes.sqlite3 NOTES_MODEL=sqlite3 PORT=3002 node ./app.mjs",
+    "sequelize-start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-mysql.yaml NOTES_MODEL=sequelize node ./app.mjs",
+    "sequelize-server1": "cross-env SEQUELIZE_CONNECT=models/sequelize-mysql.yaml NOTES_MODEL=sequelize PORT=3001 node ./app.mjs",
+    "sequelize-server2": "cross-env SEQUELIZE_CONNECT=models/sequelize-mysql.yaml NOTES_MODEL=sequelize PORT=3002 node ./app.mjs",
+    "mongodb-start": "cross-env DEBUG=notes:* MONGO_URL=mongodb://127.0.0.1/ MONGO_DBNAME=notes NOTES_MODEL=mongodb node ./app.mjs",
+    "mongodb-server1": "cross-env DEBUG=notes:* MONGO_URL=mongodb://127.0.0.1/ MONGO_DBNAME=notes NOTES_MODEL=mongodb PORT=3001 node ./app.mjs",
+    "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=notes NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
   },
   "dependencies": {
     "bootstrap": "4.5.x",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.3",
-    "debug": "~2.6.9",
+    "debug": "^2.6.9",
     "express": "^4.18.2",
     "feather-icons": "4.25.x",
     "fs-extra": "^11.1.1",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
     "jquery": "3.5.x",
+    "js-yaml": "3.13.x",
+    "level": "^6.0.1",
+    "mongodb": "^3.7.4",
     "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.5.2",
     "nodemon": "^3.0.1",
     "popper.js": "1.16.x",
-    "rotating-file-stream": "^3.1.1"
+    "rotating-file-stream": "^3.1.1",
+    "sequelize": "^6.32.1",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "capture-console": "^1.0.1"

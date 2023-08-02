@@ -2,11 +2,10 @@ import { default as DBG } from "debug";
 const debug = DBG("notes:notes-store");
 const error = DBG("notes:error-store");
 var _NotesStore;
+
 export async function useModel(model) {
   try {
-    console.log(model);
-   // let NotesStoreModule = await import(`./notes-${model}.mjs`);
-    let NotesStoreModule = await import(`./notes-memory.mjs`);
+   let NotesStoreModule = await import(`./notes-${model}.mjs`);
     let NotesStoreClass = NotesStoreModule.default;
     _NotesStore = new NotesStoreClass();
     return _NotesStore;

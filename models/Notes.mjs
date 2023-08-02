@@ -24,23 +24,27 @@ class Note {
   }
   get JSON() {
     return JSON.stringify({
-    key: this.key, title: this.title, body: this.body
+      key: this.key,
+      title: this.title,
+      body: this.body,
     });
-    }
-    static fromJSON(json) {
+  }
+  static fromJSON(json) {
     const data = JSON.parse(json);
-    if (typeof data !== 'object'
-    || !data.hasOwnProperty('key')
-    || typeof data.key !== 'string'
-    || !data.hasOwnProperty('title')
-    || typeof data.title !== 'string'
-    || !data.hasOwnProperty('body')
-    || typeof data.body !== 'string') {
+    if (
+      typeof data !== "object" ||
+      !data.hasOwnProperty("key") ||
+      typeof data.key !== "string" ||
+      !data.hasOwnProperty("title") ||
+      typeof data.title !== "string" ||
+      !data.hasOwnProperty("body") ||
+      typeof data.body !== "string"
+    ) {
       throw new Error(`Not a Note: ${json}`);
-}
-const note = new Note(data.key, data.title, data.body);
-return note;
-}
+    }
+    const note = new Note(data.key, data.title, data.body);
+    return note;
+  }
 }
 class AbstractNotesStore {
   async close() {}
@@ -52,4 +56,4 @@ class AbstractNotesStore {
   async count() {}
 }
 
-export {Note, AbstractNotesStore};
+export { Note, AbstractNotesStore };

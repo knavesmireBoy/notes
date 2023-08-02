@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import util from "util";
-import { approotdir } from "../approotdir.mjs";
+import  approotdir  from "../approotdir.mjs";
 import { Note, AbstractNotesStore } from "./Notes.mjs";
 import { default as DBG } from "debug";
 const debug = DBG("notes:notes-fs");
@@ -14,6 +14,7 @@ async function notesDir() {
   return dir;
 }
 const filePath = (notesdir, key) => path.join(notesdir, `${key}.json`);
+
 async function readJSON(notesdir, key) {
   const readFrom = filePath(notesdir, key);
   const data = await fs.readFile(readFrom, "utf8");
