@@ -93,3 +93,5 @@ router.post("/destroy/confirm", ensureAuthenticated, async (req, res, next) => {
     res.redirect("https://www.bbc.co.uk");
   }
 });
+export function init() {
+}

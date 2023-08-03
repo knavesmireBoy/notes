@@ -22,8 +22,8 @@ import {
 
 import dotenv from "dotenv/config.js";
 
-import { router as indexRouter } from "./routes/index.mjs";
-import { router as notesRouter } from "./routes/notes.mjs";
+import { router as indexRouter, init as homeInit } from "./routes/index.mjs";
+import { router as notesRouter, init as notesInit } from "./routes/notes.mjs";
 import { router as usersRouter, initPassport } from "./routes/users.mjs";
 
 import socketio from "socket.io";
@@ -38,7 +38,10 @@ const sessionStore = new FileStore({ path: "sessions" });
 import { useModel as useNotesModel } from "./models/notes-store.mjs";
 
 useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "fs")
-  .then((store) => {})
+  .then((store) => {
+    homeInit();
+    notesInit();
+  })
   .catch((error) => {
     onError({ code: "ENOTESSTORE", error });
   });
