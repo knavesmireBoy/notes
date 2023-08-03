@@ -3,14 +3,37 @@ import hbs from "hbs";
 import * as path from "path";
 // import * as favicon from 'serve-favicon';
 import { default as logger } from "morgan";
-import { default as cookieParser } from "cookie-parser";
-import { default as bodyParser } from "body-parser";
-import * as http from "http";
-import approotdir from "./approotdir.mjs";
 import rfs from "rotating-file-stream";
 import { default as DBG } from "debug";
 const debug = DBG("notes:debug");
 const dbgerror = DBG("notes:error");
+import { default as cookieParser } from "cookie-parser";
+import { default as bodyParser } from "body-parser";
+import * as http from "http";
+import approotdir from "./approotdir.mjs";
+const __dirname = approotdir;
+import {
+  normalizePort,
+  onError,
+  onListening,
+  handle404,
+  basicErrorHandler,
+} from "./appsupport.mjs";
+
+import dotenv from "dotenv/config.js";
+
+import { router as indexRouter } from "./routes/index.mjs";
+import { router as notesRouter } from "./routes/notes.mjs";
+import { router as usersRouter, initPassport } from "./routes/users.mjs";
+
+import socketio from "socket.io";
+import passportSocketIo from "passport.socketio";
+import session from "express-session";
+import sessionFileStore from "session-file-store";
+const FileStore = sessionFileStore(session);
+export const sessionCookieName = "notescookie.sid";
+const sessionSecret = "keyboard mouse";
+const sessionStore = new FileStore({ path: "sessions" });
 
 import { useModel as useNotesModel } from "./models/notes-store.mjs";
 
@@ -24,25 +47,29 @@ function fixpath(pth, ...rest) {
   app.use(pth, express.static(path.join(__dirname, ...rest)));
 }
 
-const __dirname = approotdir;
-import {
-  normalizePort,
-  onError,
-  onListening,
-  handle404,
-  basicErrorHandler,
-} from "./appsupport.mjs";
-
-import { router as indexRouter } from "./routes/index.mjs";
-import { router as notesRouter } from "./routes/notes.mjs";
-import { router as usersRouter, initPassport } from "./routes/users.mjs";
-
-import session from "express-session";
-import sessionFileStore from "session-file-store";
-const FileStore = sessionFileStore(session);
-export const sessionCookieName = "notescookie.sid";
-
 export const app = express();
+export const port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
+
+export const server = http.createServer(app);
+
+server.listen(port);
+server.on("request", (req, res) => {
+  debug(`${new Date().toISOString()} request ${req.method}
+    ${req.url}`);
+});
+server.on("error", onError);
+server.on("listening", onListening);
+
+export const io = socketio(server);
+io.use(
+  passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: sessionCookieName,
+    secret: sessionSecret,
+    store: sessionStore,
+  })
+);
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -63,14 +90,13 @@ app.use(
       : process.stdout,
   })
 );
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   session({
-    store: new FileStore({ path: "sessions" }),
-    secret: "keyboard mouse",
+    store: sessionStore,
+    secret: sessionSecret,
     resave: true,
     saveUninitialized: true,
     name: sessionCookieName,
@@ -105,21 +131,8 @@ app.use(
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);
-app.use('/users', usersRouter);
+app.use("/users", usersRouter);
 // error handlers
 // catch 404 and forward to error handler
 app.use(handle404);
 app.use(basicErrorHandler);
-export const port = normalizePort(process.env.PORT || "3000");
-
-app.set("port", port);
-
-export const server = http.createServer(app);
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
-
-server.on("request", (req, res) => {
-  debug(`${new Date().toISOString()} request ${req.method}
-    ${req.url}`);
-});
