@@ -41,25 +41,9 @@ export async function connectDB() {
       typeof process.env.SEQUELIZE_DBDIALECT !== "undefined" &&
       process.env.SEQUELIZE_DBDIALECT !== ""
     ) {
-     params.params.dialect = process.env.SEQUELIZE_DBDIALECT;
+      params.params.dialect = process.env.SEQUELIZE_DBDIALECT;
     }
-    /*
-    const sequelize = new Sequelize('database', 'username', 'password', {
-  dialect: 'sqlite',
-  storage: 'path/to/database.sqlite', // or ':memory:'
-  dialectOptions: {
-    // Your sqlite3 options here
-    // for instance, this is how you can configure the database opening mode:
-    mode: SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE | SQLite.OPEN_FULLMUTEX,
-  },
-});
-*/
-let o = {
-  dialect: 'sqlite'
-},
-opts = {...o, ...params.params};
-//opts = params.params;
-
+    let opts = params.params;
     sequlz = new Sequelize(
       params.dbname,
       params.username,

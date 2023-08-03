@@ -1,5 +1,5 @@
-import { default as express } from 'express';
-import { NotesStore as notes } from '../models/notes-store.mjs';
+import { default as express } from "express";
+import { NotesStore as notes } from "../models/notes-store.mjs";
 export const router = express.Router();
 // Add Note.
 router.get("/add", (req, res, next) => {
@@ -77,10 +77,7 @@ router.get("/destroy", async (req, res, next) => {
 // Really destroy note (destroy)
 router.post("/destroy/confirm", async (req, res, next) => {
   try {
-
     await notes.destroy(req.body.notekey);
-    console.log(44, req.body);
-
     res.redirect("/");
   } catch (err) {
     next(err);
