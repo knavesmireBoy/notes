@@ -21,10 +21,12 @@
     "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=notes NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "bootstrap": "4.5.x",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.3",
     "debug": "^2.6.9",
+    "dotenv": "^8.2.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "feather-icons": "4.25.x",
@@ -39,8 +41,9 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.5.2",
     "nodemon": "^3.0.1",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4",
     "popper.js": "1.16.x",
     "rotating-file-stream": "^3.1.1",
     "sequelize": "^6.32.1",
