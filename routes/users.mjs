@@ -19,6 +19,7 @@ export function initPassport(app) {
 export function ensureAuthenticated(req, res, next) {
   try {
     // req.user is set by Passport in the deserialize function
+    console.log(22, req.user);
     if (req.user) next();
     else res.redirect("/users/login");
   } catch (e) {
@@ -50,20 +51,6 @@ router.get("/logout", function (req, res, next) {
     next(e);
   }
 });
-passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      var check = await usersModel.userPasswordCheck(username, password);
-      if (check.check) {
-        done(null, { id: check.username, username: check.username });
-      } else {
-        done(null, false, check.message);
-      }
-    } catch (e) {
-      done(e);
-    }
-  })
-);
 
 passport.serializeUser(function (user, done) {
   try {
@@ -80,3 +67,17 @@ passport.deserializeUser(async (username, done) => {
     done(e);
   }
 });
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      var check = await usersModel.userPasswordCheck(username, password);
+      if (check.check) {
+        done(null, { id: check.username, username: check.username });
+      } else {
+        done(null, false, check.message);
+      }
+    } catch (e) {
+      done(e);
+    }
+  })
+);

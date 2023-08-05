@@ -50,10 +50,9 @@
     </div>
 
     <div class="form-group row">
-      <textarea class="form-control" name='body' 
-                rows="5">{{#if note }}{{note.body}}{{/if}}</textarea>
+      <textarea class="form-control" name='body' rows="5">{{#if note }}{{note.body}}{{/if}}</textarea>
     </div>
-    <button type="submit" class="btn btn-outline-dark">Submit</button>
+    <button type="submit" class="btn btn-dark btn-outline-dark">Submit</button>
     {{else}}
     {{> not-logged-in }}
     {{/if}}
