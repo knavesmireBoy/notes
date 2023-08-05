@@ -5,9 +5,9 @@ import {
   postMessage, destroyMessage, recentMessages,
   emitter as msgEvents
 } from '../models/messages-sequelize.mjs';
+*/
 import { io } from "../app.mjs";
 //import { emitNoteTitles } from './index.mjs';
-*/
 
 import { ensureAuthenticated } from "./users.mjs";
 export const router = express.Router();
@@ -53,7 +53,6 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
 router.get("/view", async (req, res, next) => {
   try {
     let note = await notes.read(req.query.key);
-    console.log(56, req.user);
     res.render("noteview", {
       title: note ? note.title : "",
       notekey: req.query.key,

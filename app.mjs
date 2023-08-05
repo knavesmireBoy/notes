@@ -73,13 +73,18 @@ io.use(passportSocketIo.authorize({
     secret:       sessionSecret,
     store:        sessionStore
 }));
+
+/*
 io.use(function(socket, next){
-  if (socket.request.headers.cookie) return next();
+  if (socket.request.headers.cookie) {
+    socket.emit('notetitles');
+    return next();
+  }
   let err  = new Error('Authentication error');
   err.data = { type : 'authentication_error' };
   next(err);
 });
-
+*/
 // TODO is success and fail callbacks required or useful?  These are marked optional.
 
 // view engine setup
@@ -136,3 +141,4 @@ app.use('/users', usersRouter);
 // catch 404 and forward to error handler
 app.use(handle404);
 app.use(basicErrorHandler);
+

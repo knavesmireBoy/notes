@@ -29,8 +29,6 @@ router.get("/", async (req, res, next) => {
 
 const emitNoteTitles = async (...args) => {
   const notelist = await getKeyTitlesList();
-  //io.emit("notetitles", { notelist });
-  console.log('HO', ...args);
   io.of("/home").emit("notetitles", { notelist });
 };
 
@@ -38,21 +36,9 @@ export function init() {
 
   io.of("/home").on("connect", (socket) => {
     debug("socketio connection on /home");
-    /*
-    socket.on('chat message', (msg) => {
-      io.emit('chat message', msg);
-    });
-    */
   });
-
-/*
-  io.on("connect", (socket) => {
-    debug("socketio connection on /home");
-  });
-  */
- 
   notes.on("notecreated", emitNoteTitles);
-  notes.on("noteupdate", emitNoteTitles);
-  notes.on("notedestroy", emitNoteTitles);
+  notes.on("noteupdated", emitNoteTitles);
+  notes.on("notedestroyed", emitNoteTitles);
   
 }

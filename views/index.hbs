@@ -17,13 +17,13 @@
   </div>
 </div>
 {{> footerjs}}
-<!--<script src="/socket.io/socket.io.js"></script>-->
+<script src="/socket.io/socket.io.js"></script>
 <script>
 
 $(document).ready(function () {
-  var socket = io("/home"),
-  dom = function(list) {  
-    
+  var socket = io('http://localhost:5858/home'),
+    dom = function(list) {  
+    console.log('dom2');
     for (var i = 0; i < list.length; i++) {
       let notedata = list[i];
       $("#notetitles").append(
@@ -34,15 +34,17 @@ $(document).ready(function () {
           "</a>"
       );
     }
-
   };
-  socket.on("connect", (socket) => {
+  socket.on("connect", () => {
     console.log("socketio connection on /home innit");
-  });
-  socket.on("notetitles", function (data) {    
+    
+    });
+  socket.on("notetitles", function (data) {   
+    console.log('dom1'); 
     $("#notetitles").empty();
     dom(data.notelist);
   });
+
 });
 
 
