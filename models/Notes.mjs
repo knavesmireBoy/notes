@@ -48,7 +48,7 @@ class Note {
     return note;
   }
 }
-export class AbstractNotesStore extends EventEmitter {
+class AbstractNotesStore extends EventEmitter {
   async close() {}
   async update(key, title, body) {}
   async create(key, title, body) {}

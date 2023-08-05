@@ -65,14 +65,14 @@ server.on("error", onError);
 server.on("listening", onListening);
 
 export const io = socketio(server);
-io.use(
-  passportSocketIo.authorize({
-    cookieParser: cookieParser,
-    key: sessionCookieName,
-    secret: sessionSecret,
-    store: sessionStore,
-  })
-);
+
+var sessionMiddleware = session({
+  store: sessionStore,
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: false
+});
+
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -81,7 +81,7 @@ hbs.registerPartials(path.join(__dirname, "partials"));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-
+/*
 app.use(
   logger(process.env.REQUEST_LOG_FORMAT || "dev", {
     stream: process.env.REQUEST_LOG_FILE
@@ -93,9 +93,11 @@ app.use(
       : process.stdout,
   })
 );
+*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(
   session({
     store: sessionStore,
@@ -105,6 +107,28 @@ app.use(
     name: sessionCookieName,
   })
 );
+
+var passport_session = {
+  cookieParser: cookieParser,
+  key: sessionCookieName,
+  secret: sessionSecret,
+  store: sessionStore
+};
+
+io.use(passportSocketIo.authorize(passport_session));
+
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+  console.dir(data.user)
+  accept();
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  console.log('failed connection to socket.io:', message);
+  if (error) {throw new Error(message);}
+  else {accept(new Error(message));
+  }
+}
 initPassport(app);
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -117,6 +141,7 @@ fixpath(
   "js"
 );
 fixpath("/assets/vendor/bootstrap/css", "minty");
+
 app.use(
   "/assets/vendor/jquery",
   express.static(path.join(__dirname, "node_modules", "jquery", "dist"))

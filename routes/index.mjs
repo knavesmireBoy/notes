@@ -1,26 +1,9 @@
 import { default as express } from "express";
 import { io } from "../app.mjs";
 import { NotesStore as notes } from "../models/notes-store.mjs";
+import { default as DBG } from "debug";
+const debug = DBG("notes:debug");
 export const router = express.Router();
-/* GET home page. */
-/*
-router.get("/", async (req, res, next) => {
-  try {
-    let keylist = await notes.keylist();
-    let keyPromises = keylist.map((key) => {
-      return notes.read(key);
-    });
-    let notelist = await Promise.all(keyPromises);
-    res.render("index", {
-      title: "Notes",
-      notelist: notelist,
-      user: req.user ? req.user : undefined,
-    });
-  } catch (e) {
-    next(e);
-  }
-});
-*/
 
 async function getKeyTitlesList() {
   const keylist = await notes.keylist();
@@ -30,7 +13,6 @@ async function getKeyTitlesList() {
     return { key: note.key, title: note.title };
   });
 }
-
 
 router.get("/", async (req, res, next) => {
   try {
@@ -45,18 +27,32 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-
-const emitNoteTitles = async () => {
+const emitNoteTitles = async (...args) => {
   const notelist = await getKeyTitlesList();
-  io.of('/home').emit('notetitles', { notelist });
-  };
-  export function init() {
-  io.of('/home').on('connect', socket => {
-  debug('socketio connection on /home');
-  });
-  notes.on('notecreated', emitNoteTitles);
-  notes.on('noteupdate', emitNoteTitles);
-  notes.on('notedestroy', emitNoteTitles);
-  }
+  //io.emit("notetitles", { notelist });
+  console.log('HO', ...args);
+  io.of("/home").emit("notetitles", { notelist });
+};
 
-export function init() {}
+export function init() {
+
+  io.of("/home").on("connect", (socket) => {
+    debug("socketio connection on /home");
+    /*
+    socket.on('chat message', (msg) => {
+      io.emit('chat message', msg);
+    });
+    */
+  });
+
+/*
+  io.on("connect", (socket) => {
+    debug("socketio connection on /home");
+  });
+  */
+ 
+  notes.on("notecreated", emitNoteTitles);
+  notes.on("noteupdate", emitNoteTitles);
+  notes.on("notedestroy", emitNoteTitles);
+  
+}

@@ -15,6 +15,7 @@ export function initPassport(app) {
   app.use(passport.initialize());
   app.use(passport.session());
 }
+
 export function ensureAuthenticated(req, res, next) {
   try {
     // req.user is set by Passport in the deserialize function

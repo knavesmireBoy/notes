@@ -1,5 +1,14 @@
 import { default as express } from "express";
 import { NotesStore as notes } from "../models/notes-store.mjs";
+/*
+import {
+  postMessage, destroyMessage, recentMessages,
+  emitter as msgEvents
+} from '../models/messages-sequelize.mjs';
+import { io } from "../app.mjs";
+//import { emitNoteTitles } from './index.mjs';
+*/
+
 import { ensureAuthenticated } from "./users.mjs";
 export const router = express.Router();
 // Add Note.
@@ -34,7 +43,8 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
         req.body.body
       );
     }
-    res.redirect("/notes/view?key=" + req.body.notekey);
+    //res.redirect("/notes/view?key=" + req.body.notekey);
+    res.redirect("/");
   } catch (err) {
     next(err);
   }
@@ -43,6 +53,7 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
 router.get("/view", async (req, res, next) => {
   try {
     let note = await notes.read(req.query.key);
+    console.log(777, note);
     res.render("noteview", {
       title: note ? note.title : "",
       notekey: req.query.key,
@@ -93,5 +104,59 @@ router.post("/destroy/confirm", ensureAuthenticated, async (req, res, next) => {
     res.redirect("https://www.bbc.co.uk");
   }
 });
+
 export function init() {
+  /*
+  notes.on('noteupdated',  note => {
+      const toemit = {
+          key: note.key, title: note.title, body: note.body
+      };
+      debug(`noteupdated to ${note.key} ${util.inspect(toemit)}`);
+      io.of('/notes').to(note.key).emit('noteupdated', toemit);
+      emitNoteTitles();
+  });
+  notes.on('notedestroyed', key => {
+      debug(`notedestroyed to ${key}`);
+      io.of('/notes').to(key).emit('notedestroyed', key);
+      emitNoteTitles();
+  });
+  
+  msgEvents.on('newmessage', newmsg => {
+      debug(`newmessage ${util.inspect(newmsg)} ==> ${newmsg.namespace} ${newmsg.room}`);
+      io.of(newmsg.namespace).to(newmsg.room).emit('newmessage', newmsg);
+  });
+  msgEvents.on('destroymessage', data => {
+      debug(`destroymessage ${util.inspect(data)} ==> ${data.namespace} ${data.room}`);
+      io.of(data.namespace).to(data.room).emit('destroymessage', data);
+  });
+
+
+  io.of('/notes').on('connect', async (socket) => {
+      let notekey = socket.handshake.query.key;
+      debug(`/notes browser connected on ${socket.id} ${util.inspect(socket.handshake.query)}`);
+      if (notekey) {
+          socket.join(notekey);
+
+          socket.on('create-message', async (newmsg, fn) => {
+              try {
+                  debug(`socket createMessage ${util.inspect(newmsg)}`);
+                  await postMessage(
+                      newmsg.from, newmsg.namespace, newmsg.room,
+                      newmsg.message);
+                  fn('ok');
+              } catch (err) {
+                  error(`FAIL to create message ${err.stack}`);
+              }
+          });
+
+          socket.on('delete-message', async (data) => {
+              try {
+                  await destroyMessage(data.id);
+              } catch (err) {
+                  error(`FAIL to delete message ${err.stack}`);
+              }
+          });
+      }
+  });
+  */
 }
