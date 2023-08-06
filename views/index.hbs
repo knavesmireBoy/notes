@@ -23,7 +23,6 @@
 $(document).ready(function () {
   var socket = io('http://localhost:5858/home'),
     dom = function(list) {  
-    console.log('dom2');
     for (var i = 0; i < list.length; i++) {
       let notedata = list[i];
       $("#notetitles").append(
@@ -40,7 +39,6 @@ $(document).ready(function () {
     
     });
   socket.on("notetitles", function (data) {   
-    console.log('dom1'); 
     $("#notetitles").empty();
     dom(data.notelist);
   });

@@ -50,19 +50,16 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
     const sqnote = await SQNote.create({
       notekey: key,
       title,
-      body
+      body,
     });
-
     let note = new Note(sqnote.notekey, sqnote.title, sqnote.body);
-   // debug(`CREATE ${util.inspect(note)}`);
+    // debug(`CREATE ${util.inspect(note)}`);
     this.emitCreated(note);
     return note;
   }
   async read(key) {
     await connectDB();
     const note = await SQNote.findOne({ where: { notekey: key } });
-   // this.emitUpdated(note);
-
     if (!note) {
       throw new Error(`No note found for ${key}`);
     } else {
