@@ -1,5 +1,6 @@
 import { default as express } from "express";
 import { NotesStore as notes } from "../models/notes-store.mjs";
+
 /*
 import {
   postMessage, destroyMessage, recentMessages,
@@ -7,7 +8,7 @@ import {
 } from '../models/messages-sequelize.mjs';
 */
 import { io } from "../app.mjs";
-//import { emitNoteTitles } from './index.mjs';
+import { emitNoteTitles } from "./index.mjs";
 
 import { ensureAuthenticated } from "./users.mjs";
 export const router = express.Router();
@@ -103,9 +104,9 @@ router.post("/destroy/confirm", ensureAuthenticated, async (req, res, next) => {
     res.redirect("https://www.bbc.co.uk");
   }
 });
-
+/*
 export function init() {
-  /*
+  
   notes.on('noteupdated',  note => {
       const toemit = {
           key: note.key, title: note.title, body: note.body
@@ -157,5 +158,26 @@ export function init() {
           });
       }
   });
-  */
+}
+*/
+
+export function init() {
+  io.of("/notes").on("connect", (socket) => {
+    if (socket.handshake.query.key) {
+      socket.join(socket.handshake.query.key);
+    }
+  });
+  notes.on("noteupdated", (note) => {
+    const toemit = {
+      key: note.key,
+      title: note.title,
+      body: note.body,
+    };
+    io.of("/notes").to(note.key).emit("noteupdated", toemit);
+    emitNoteTitles();
+  });
+  notes.on("notedestroyed", (key) => {
+    io.of("/notes").to(key).emit("notedestroyed", key);
+    emitNoteTitles();
+  });
 }
