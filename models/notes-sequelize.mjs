@@ -1,6 +1,8 @@
 import { Note, AbstractNotesStore } from "./Notes.mjs";
 import Sequelize from "sequelize";
 import { connectDB as connectSequlz, close as closeSequlz } from "./sequlz.mjs";
+import * as util from "util";
+
 import DBG from "debug";
 const debug = DBG("notes:notes-sequelize");
 const error = DBG("notes:error-sequelize");
@@ -40,7 +42,7 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
     } else {
       await SQNote.update({ title, body }, { where: { notekey: key } });
       let note = await this.read(key);
-      //debug(`UPDATE ${util.inspect(note)}`);
+    debug(`UPDATE ${util.inspect(note)}`);
       this.emitUpdated(note);
       return note;
     }

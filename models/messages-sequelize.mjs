@@ -53,6 +53,7 @@ export class SQMessage extends Sequelize.Model {}
 async function connectDB() {
   if (sequelize) return;
   sequelize = await connectSequlz();
+  console.log(56, sequelize);
   SQMessage.init(
     {
       id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },

@@ -1,5 +1,7 @@
 import { default as express } from "express";
 import { NotesStore as notes } from "../models/notes-store.mjs";
+import * as util from "util";
+
 
 import {
   postMessage,
@@ -58,6 +60,7 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
 router.get("/view", async (req, res, next) => {
   try {
     let note = await notes.read(req.query.key);
+    console.log(63, req.query.key);
     res.render("noteview", {
       title: note ? note.title : "",
       notekey: req.query.key,
@@ -112,15 +115,15 @@ router.post("/destroy/confirm", ensureAuthenticated, async (req, res, next) => {
 
 export function init() {
   io.of("/notes").on("connect", async (socket) => {
-    let notekey = socket.handshake.query.key;
+    let mynotekey = socket.handshake.query.key;
     debug(
       `/notes browser connected on ${socket.id} ${util.inspect(
         socket.handshake.query
       )}`
     );
-    if (notekey) {
-      socket.join(notekey);
-
+    if (mynotekey) {
+      socket.join(mynotekey);
+/*
       socket.on("create-message", async (newmsg, fn) => {
         try {
           debug(`socket createMessage ${util.inspect(newmsg)}`);
@@ -143,8 +146,10 @@ export function init() {
           error(`FAIL to delete message ${err.stack}`);
         }
       });
+      */
     }
   }); //connect
+
   notes.on("noteupdated", (note) => {
     const toemit = {
       key: note.key,
@@ -154,10 +159,12 @@ export function init() {
     io.of("/notes").to(note.key).emit("noteupdated", toemit);
     emitNoteTitles();
   });
+
   notes.on("notedestroyed", (key) => {
     io.of("/notes").to(key).emit("notedestroyed", key);
     emitNoteTitles();
   });
+/*
   msgEvents.on("newmessage", (newmsg) => {
     debug(
       `newmessage ${util.inspect(newmsg)} ==> ${newmsg.namespace} ${
@@ -166,10 +173,12 @@ export function init() {
     );
     io.of(newmsg.namespace).to(newmsg.room).emit("newmessage", newmsg);
   });
+
   msgEvents.on("destroymessage", (data) => {
     debug(
       `destroymessage ${util.inspect(data)} ==> ${data.namespace} ${data.room}`
     );
     io.of(data.namespace).to(data.room).emit("destroymessage", data);
   });
+*/
 }
