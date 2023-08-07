@@ -59,13 +59,15 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
 // Read Note (read)
 router.get("/view", async (req, res, next) => {
   try {
-    let note = await notes.read(req.query.key);
-    console.log(63, req.query.key);
+    let note = await notes.read(req.query.key),
+    messages = await recentMessages('/notes', req.query.key);
+    console.log(64, messages);
     res.render("noteview", {
       title: note ? note.title : "",
       notekey: req.query.key,
       user: req.user ? req.user : undefined,
       note: note,
+      messages: messages
     });
   } catch (err) {
     next(err);
@@ -123,7 +125,7 @@ export function init() {
     );
     if (mynotekey) {
       socket.join(mynotekey);
-/*
+
       socket.on("create-message", async (newmsg, fn) => {
         try {
           debug(`socket createMessage ${util.inspect(newmsg)}`);
@@ -146,7 +148,7 @@ export function init() {
           error(`FAIL to delete message ${err.stack}`);
         }
       });
-      */
+    
     }
   }); //connect
 
@@ -164,7 +166,7 @@ export function init() {
     io.of("/notes").to(key).emit("notedestroyed", key);
     emitNoteTitles();
   });
-/*
+
   msgEvents.on("newmessage", (newmsg) => {
     debug(
       `newmessage ${util.inspect(newmsg)} ==> ${newmsg.namespace} ${
@@ -180,5 +182,5 @@ export function init() {
     );
     io.of(data.namespace).to(data.room).emit("destroymessage", data);
   });
-*/
+
 }
