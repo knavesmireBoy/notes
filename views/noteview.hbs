@@ -102,7 +102,6 @@ $('#navbartitle').empty();
 $('#navbartitle').text(note.title);
 $('#notebody').empty();
 $('#notebody').text(note.body);
-console.log(39, note);
 
 });
 
@@ -113,7 +112,6 @@ window.location.href = "/";
 {{#if user}}
 
 $('#submitNewComment').on('click', function(event) {
-    event.preventDefault();
 socket.emit('create-message', {
 from: $('#comment-from').val(),
 namespace: $('#comment-namespace').val(),
@@ -135,7 +133,7 @@ $('#noteCommentTextArea').empty();
                 '<div class="card-text">%message%',
                     '<small style="display: block">%timestamp%</small>',
                 '</div>',
-                '<button type="button" class="btn btn-primary message-del-button" ',
+                '<button type="button" class="message-del btn btn-primary" ',
                     'data-id="%id%" ',
                     'data-namespace="%namespace%" ',
                     'data-room="%room%">',
@@ -152,6 +150,19 @@ $('#noteCommentTextArea').empty();
         .replace(/%timestamp%/g, newmsg.timestamp);
         $('#noteMessages').prepend(msgtxt);
     });
+
+    $('button.message-del').on('click', function(event) {
+        console.log(156, $(event.target).data('id'));
+socket.emit('delete-message', {
+id: $(event.target).data('id'),
+namespace: $(event.target).data('namespace'),
+room: $(event.target).data('room')
+});
+
+socket.on('destroymessage', data => {
+$('#note-message-'+data.id).remove();
+});
+});
 
 {{/if}}
 
