@@ -1,6 +1,6 @@
 dbname: notes
-username: root
-password: covid19@krauq
+username: notes
+password: notes
 params:
   host: localhost
   port: 3306
