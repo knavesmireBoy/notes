@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "server": "cross-env SERVERPORT=3002 node ./fiboserver",
-    "client": "cross-env SERVERPORT=3002 node ./fiboclient"
+    "start": "cross-env DEBUG=notes:* node ./app.mjs"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

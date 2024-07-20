@@ -7,13 +7,12 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-//const fibonacciRouter = require('./routes/fibonacci');
-const fibonacci = require('./routes/fibonacci-async1');
-const app = express();
-
+const index = require('./routes/index.mjs');
+   // const fibonacci = require('./routes/fibonacci');
+   // const fibonacci = require('./routes/fibonacci-async1');
+   // const fibonacci = require('./routes/fibonacci-await');
+   const fibonacci = require('./routes/fibonacci-rest');
+   const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -25,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+//app.use('/', indexRouter);
 app.use('/fibonacci', fibonacci);
 
 // catch 404 and forward to error handler
