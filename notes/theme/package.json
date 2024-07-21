@@ -1,9 +1,14 @@
 {
-  "scripts": {
-    "download": "wget -O -https://github.com/twbs/bootstrap/archive/v4.5.0.tar.gz | tar xvfz -",
-    "postdownload": "cd bootstrap-4.5.0 && npm install"
-  },
-  "dependencies": {
-    "wget": "0.0.1"
+    "scripts": {
+      "download": "wget -O - https://github.com/twbs/bootstrap/archive/v4.5.0.tar.gz | tar xvfz -",
+      "postdownload": "cd bootstrap-4.5.0 && npm install",
+      "clean": "rm -rf bootstrap-4.5.0",
+      "prebuild": "cp _custom.scss bootstrap.scss bootstrap-4.5.0/scss",
+      "build": "cd bootstrap-4.5.0 && npm run dist",
+      "postbuild": "mkdir -p dist && cp -r bootstrap-4.5.0/dist .",
+      "watch": "cd bootstrap-4.5.0 && npm run watch",
+      "dl-minty": "mkdir -p minty && npm run dl-minty-css && npm run dl-minty-min-css",
+   "dl-minty-css": "wget https://bootswatch.com/4/minty/bootstrap.css -Ominty/bootstrap.css",
+   "dl-minty-min-css": "wget https://bootswatch.com/4/minty/bootstrap.min.css -Ominty/bootstrap.min.css"
+    }
   }
-}

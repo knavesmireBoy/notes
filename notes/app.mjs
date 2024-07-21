@@ -52,6 +52,9 @@ app.use(
 
 app.use('/assets/vendor/feather-icons', express.static(
   path.join(__dirname, 'node_modules', 'feather-icons', 'dist')));
+
+  app.use('/assets/vendor/bootstrap', express.static(
+    path.join(__dirname, 'theme', 'dist')));
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);
