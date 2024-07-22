@@ -2,6 +2,20 @@ import { port } from "./app.mjs";
 import { server } from "./app.mjs";
 import { default as DBG } from "debug";
 import * as util from "util";
+import { NotesStore } from "./models/notes-store.mjs";
+
+async function catchProcessDeath() {
+  debug("urk...");
+  await NotesStore.close();
+  await server.close();
+  process.exit(0);
+}
+process.on("SIGTERM", catchProcessDeath);
+process.on("SIGINT", catchProcessDeath);
+process.on("SIGHUP", catchProcessDeath);
+process.on("exit", () => {
+  debug("exiting...");
+});
 
 const debug = DBG("notes:debug");
 const dbgerror = DBG("notes:error");
