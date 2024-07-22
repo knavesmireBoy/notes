@@ -3,15 +3,20 @@ import { default as hbs } from "hbs";
 import * as path from "path";
 // import * as favicon from 'serve-favicon';
 import { default as logger } from "morgan";
+import rfs from "rotating-file-stream";
 import { default as cookieParser } from "cookie-parser";
 import { default as bodyParser } from "body-parser";
 import * as http from "http";
 import { approotdir } from "./approotdir.mjs";
+import { default as DBG } from 'debug';
+
 
 import { InMemoryNotesStore } from "./models/notes-memory.mjs";
 export const NotesStore = new InMemoryNotesStore();
 
 const __dirname = approotdir;
+const debug = DBG('notes:debug');
+const dbgerror = DBG('notes:error');
 import {
   normalizePort,
   onError,
@@ -30,7 +35,19 @@ app.set("view engine", "hbs");
 hbs.registerPartials(path.join(__dirname, "partials"));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger("dev"));
+//app.use(logger(process.env.REQUEST_LOG_FORMAT || 'dev'));
+app.use(
+  logger(process.env.REQUEST_LOG_FORMAT || "dev", {
+    stream: process.env.REQUEST_LOG_FILE
+      ? rfs.createStream(process.env.REQUEST_LOG_FILE, {
+          size: "10M", // rotate every 10 MegaBytes written
+          interval: "1d", // rotate daily
+          compress: "gzip", // compress rotated files
+        })
+      : process.stdout,
+  })
+);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -50,11 +67,15 @@ app.use(
   )
 );
 
-app.use('/assets/vendor/feather-icons', express.static(
-  path.join(__dirname, 'node_modules', 'feather-icons', 'dist')));
+app.use(
+  "/assets/vendor/feather-icons",
+  express.static(path.join(__dirname, "node_modules", "feather-icons", "dist"))
+);
 
-  app.use('/assets/vendor/bootstrap', express.static(
-    path.join(__dirname, 'theme', 'dist')));
+app.use(
+  "/assets/vendor/bootstrap",
+  express.static(path.join(__dirname, "theme", "dist"))
+);
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);
@@ -69,3 +90,7 @@ export const server = http.createServer(app);
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
+server.on('request', (req, res) => {
+  debug(`${new Date().toISOString()} request ${req.method}
+${req.url}`);
+});

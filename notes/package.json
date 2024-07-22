@@ -12,10 +12,12 @@
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "^4.19.2",
+    "feather-icons": "^4.25.0",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jquery": "^3.5.1",
     "morgan": "~1.9.1",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "rotating-file-stream": "^2.1.6"
   }
 }
