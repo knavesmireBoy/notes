@@ -1,5 +1,5 @@
 {
-  "name": "fibonacci",
+  "name": "notes",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,6 @@
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "^4.19.2",
-    "feather-icons": "^4.25.0",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jquery": "^3.5.1",
