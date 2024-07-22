@@ -8,15 +8,18 @@ import { default as cookieParser } from "cookie-parser";
 import { default as bodyParser } from "body-parser";
 import * as http from "http";
 import { approotdir } from "./approotdir.mjs";
-import { default as DBG } from 'debug';
+import { default as DBG } from "debug";
 
-
-import { InMemoryNotesStore } from "./models/notes-memory.mjs";
-export const NotesStore = new InMemoryNotesStore();
+import { useModel as useNotesModel } from "./models/notes-store.mjs";
+useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "memory")
+  .then((store) => {})
+  .catch((error) => {
+    onError({ code: "ENOTESSTORE", error });
+  });
 
 const __dirname = approotdir;
-const debug = DBG('notes:debug');
-const dbgerror = DBG('notes:error');
+const debug = DBG("notes:debug");
+const dbgerror = DBG("notes:error");
 import {
   normalizePort,
   onError,
@@ -90,7 +93,7 @@ export const server = http.createServer(app);
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
-server.on('request', (req, res) => {
+server.on("request", (req, res) => {
   debug(`${new Date().toISOString()} request ${req.method}
 ${req.url}`);
 });

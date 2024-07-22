@@ -3,7 +3,7 @@ const _note_title = Symbol("title");
 const _note_body = Symbol("body");
 export class Note {
   constructor(key, title, body) {
-    this[_note_key] = key;
+    this[_note_key] = key.trim();
     this[_note_title] = title;
     this[_note_body] = body;
   }
@@ -26,7 +26,7 @@ export class Note {
     return JSON.stringify({
       key: this.key,
       title: this.title,
-      body: this.body,
+      body: this.body
     });
   }
   static fromJSON(json) {

@@ -1,11 +1,10 @@
 import { port } from "./app.mjs";
 import { server } from "./app.mjs";
-import { default as DBG } from 'debug';
-import * as util from 'util';
+import { default as DBG } from "debug";
+import * as util from "util";
 
-
-const debug = DBG('notes:debug'); 
-const dbgerror = DBG('notes:error'); 
+const debug = DBG("notes:debug");
+const dbgerror = DBG("notes:error");
 
 export function normalizePort(val) {
   const port = parseInt(val, 10);
@@ -32,6 +31,13 @@ export function onError(error) {
       console.error(`${bind} is already in use`);
       process.exit(1);
       break;
+    case "ENOTESSTORE":
+      console.error(
+        `Notes data store initialization failure because `,
+        error.error
+      );
+      process.exit(1);
+      break;
     default:
       throw error;
   }
@@ -39,9 +45,7 @@ export function onError(error) {
 
 export function onListening() {
   const addr = server.address();
-  const bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
+  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug(`Listening on ${bind}`);
 }
 
@@ -64,10 +68,10 @@ export function basicErrorHandler(err, req, res, next) {
   res.render("error");
 }
 
-process.on('uncaughtException', function(err) {
-  console.error(`I've crashed!!! - ${(err.stack || err)}`);
+process.on("uncaughtException", function (err) {
+  console.error(`I've crashed!!! - ${err.stack || err}`);
 });
-process.on('unhandledRejection', (reason, p) => {
-console.error(`Unhandled Rejection at: ${util.inspect(p)} reason:
+process.on("unhandledRejection", (reason, p) => {
+  console.error(`Unhandled Rejection at: ${util.inspect(p)} reason:
 ${reason}`);
 });

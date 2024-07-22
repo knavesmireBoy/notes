@@ -9,15 +9,14 @@
     <label for="notekey" class="col-1 col-form-label">Key</label>
     {{#if docreate }}
     <div class="col">
-    <input type='text' class="form-control"
-    placeholder="note key" name='notekey' value=''/>
+    <input type='text' class="form-control" placeholder="note key" name='notekey' value=''/>
     </div>
     {{else}}
     {{#if note }}
     <span class="input-group-text">{{notekey}}</span>
     {{/if}}
     <input type='hidden' name='notekey'
-    value='{{#if note }}{{notekey}}{{/if}} '/>
+    value='{{#if note }}{{notekey}}{{/if}}'/>
     {{/if}}
     </div>
  <div class="form-group row">

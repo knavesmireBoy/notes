@@ -56,12 +56,13 @@ async function readJSON(notesdir, key) {
   return Note.fromJSON(data);
 }
 async function crupdate(key, title, body) {
-  const notesdir = await notesDir();
-  if (key.indexOf("/") >= 0) {
-    throw new Error(`key ${key} cannot contain '/'`);
+  const notesdir = await notesDir(),
+  k = key.trim();
+  if (k.indexOf("/") >= 0) {
+    throw new Error(`key ${k} cannot contain '/'`);
   }
-  const note = new Note(key, title, body);
-  const writeTo = filePath(notesdir, key);
+  const note = new Note(k, title, body);
+  const writeTo = filePath(notesdir, k);
   const writeJSON = note.JSON;
   await fs.writeFile(writeTo, writeJSON, "utf8");
   return note;
