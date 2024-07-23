@@ -5,7 +5,9 @@ import DBG from "debug";
 const debug = DBG("notes:notes-sequelize");
 const error = DBG("notes:error-sequelize");
 let sequelize;
+
 export class SQNote extends Sequelize.Model {}
+
 async function connectDB() {
   if (sequelize) return;
   sequelize = await connectSequlz();

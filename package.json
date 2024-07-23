@@ -16,7 +16,10 @@
     "sqlite3-server2": "cross-env SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=sqlite3 PORT=3002 node ./app.mjs",
     "sequelize-start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize node ./app.mjs",
     "sequelize-server1": "cross-env SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize PORT=3001 node ./app.mjs",
-    "sequelize-server2": "cross-env SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize PORT=3002 node ./app.mjs"
+    "sequelize-server2": "cross-env SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize PORT=3002 node ./app.mjs",
+    "mongodb-start": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb node ./app.mjs",
+    "mongodb-server1": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3001 node ./app.mjs",
+    "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
   },
   "dependencies": {
     "bootstrap": "^4.5.3",
@@ -30,6 +33,7 @@
     "jquery": "^3.5.1",
     "js-yaml": "^3.13.1",
     "level": "^6.0.0",
+    "mongodb": "^3.7.4",
     "morgan": "~1.9.1",
     "popper.js": "^1.16.1",
     "rotating-file-stream": "^2.1.6",
