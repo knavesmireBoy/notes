@@ -33,11 +33,12 @@
     "jquery": "^3.5.1",
     "js-yaml": "^3.13.1",
     "level": "^6.0.0",
-    "morgan": "~1.9.1",
     "mongodb": "^3.6.8",
+    "morgan": "~1.9.1",
     "popper.js": "^1.16.1",
     "rotating-file-stream": "^2.1.6",
     "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "superagent": "^5.3.1"
   }
 }
