@@ -6,7 +6,9 @@ import DBG from "debug";
 const log = DBG("users:model-users");
 const error = DBG("users:error");
 var sequlz;
+
 export class SQUser extends Sequelize.Model {}
+
 export async function connectDB() {
   if (sequlz) return sequlz;
   const yamltext = await fs.readFile(process.env.SEQUELIZE_CONNECT, "utf8");
@@ -83,4 +85,37 @@ export function userParams(req) {
     emails: JSON.stringify(req.params.emails),
     photos: JSON.stringify(req.params.photos),
   };
+}
+export function sanitizedUser(user) {
+  var ret = {
+    id: user.username,
+    username: user.username,
+    provider: user.provider,
+    familyName: user.familyName,
+    givenName: user.givenName,
+    middleName: user.middleName,
+  };
+  try {
+    ret.emails = JSON.parse(user.emails);
+  } catch (e) {
+    ret.emails = [];
+  }
+  try {
+    ret.photos = JSON.parse(user.photos);
+  } catch (e) {
+    ret.photos = [];
+  }
+  return ret;
+}
+export async function findOneUser(username) {
+  let user = await SQUser.findOne({ where: { username: username } });
+  user = user ? sanitizedUser(user) : undefined;
+  return user;
+}
+
+export async function createUser(req) {
+  let tocreate = userParams(req);
+  await SQUser.create(tocreate);
+  const result = await findOneUser(req.params.username);
+  return result;
 }
