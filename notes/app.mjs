@@ -106,8 +106,6 @@ app.use("/users", usersRouter);
 app.use(handle404);
 app.use(basicErrorHandler);
 
-
-
 export const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
