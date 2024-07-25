@@ -38,6 +38,7 @@ reason: ${reason}`);
 });
 // Mimic API Key authentication.
 var apiKeys = [{ user: "them", key: "D4ED43C0-8BD6-4FE2-B358-7C0E230D11EF" }];
+
 function check(req, res, next) {
   if (req.authorization && req.authorization.basic) {
     var found = false;

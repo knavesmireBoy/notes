@@ -30,6 +30,11 @@ import {
 
 import { router as indexRouter } from "./routes/index.mjs";
 import { router as notesRouter } from "./routes/notes.mjs";
+import { router as usersRouter, initPassport } from "./routes/users.mjs";
+import session from "express-session";
+import sessionFileStore from "session-file-store";
+const FileStore = sessionFileStore(session);
+export const sessionCookieName = "notescookie.sid";
 
 export const app = express();
 // view engine setup
@@ -82,10 +87,23 @@ app.use(
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);
+app.use("/users", usersRouter);
 // error handlers
 // catch 404 and forward to error handler
 app.use(handle404);
 app.use(basicErrorHandler);
+
+app.use(
+  session({
+    store: new FileStore({ path: "sessions" }),
+    secret: "keyboard mouse",
+    resave: true,
+    saveUninitialized: true,
+    name: sessionCookieName,
+  })
+);
+initPassport(app);
+
 export const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
