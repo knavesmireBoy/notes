@@ -9,7 +9,7 @@ import { default as bodyParser } from "body-parser";
 import * as http from "http";
 import { approotdir } from "./approotdir.mjs";
 import { default as DBG } from "debug";
-
+import dotenv from 'dotenv/config.js';
 import { useModel as useNotesModel } from "./models/notes-store.mjs";
 useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "memory")
   .then((store) => {})

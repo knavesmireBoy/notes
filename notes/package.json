@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-   "start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 node ./app.mjs"
+    "start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 node ./app.mjs"
   },
   "dependencies": {
     "bootstrap": "^4.5.3",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
     "express": "^4.19.2",
     "express-session": "^1.17.3",
     "feather-icons": "^4.25.0",
@@ -22,6 +23,7 @@
     "morgan": "~1.9.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4",
     "popper.js": "^1.16.1",
     "rotating-file-stream": "^2.1.6",
     "sequelize": "^6.37.3",

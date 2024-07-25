@@ -59,3 +59,14 @@ typings/
 
 # next.js build output
 .next
+
+
+notes-fs-data
+noteslevel
+chap07.sqlite3
+notes-sequelize.sqlite3
+users-sequelize.sqlite3
+package-lock.json
+data
+node_modules
+.env
