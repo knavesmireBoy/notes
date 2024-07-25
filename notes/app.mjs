@@ -56,10 +56,23 @@ app.use(
   })
 );
 
+//https://stackoverflow.com/questions/16781294/passport-js-passport-initialize-middleware-not-in-use
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({
+    store: new FileStore({ path: "sessions" }),
+    secret: "keyboard mouse",
+    resave: true,
+    saveUninitialized: true,
+    name: sessionCookieName,
+  })
+);
+initPassport(app);
+
 app.use(
   "/assets/vendor/bootstrap",
   express.static(path.join(__dirname, "node_modules", "bootstrap", "dist"))
@@ -93,16 +106,7 @@ app.use("/users", usersRouter);
 app.use(handle404);
 app.use(basicErrorHandler);
 
-app.use(
-  session({
-    store: new FileStore({ path: "sessions" }),
-    secret: "keyboard mouse",
-    resave: true,
-    saveUninitialized: true,
-    name: sessionCookieName,
-  })
-);
-initPassport(app);
+
 
 export const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
