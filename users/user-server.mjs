@@ -9,6 +9,7 @@ import {
   sanitizedUser,
 } from "./users-sequelize.mjs";
 import DBG from "debug";
+import { default as bcrypt } from "bcrypt";
 const log = DBG("users:service");
 const error = DBG("users:error");
 ///////////// Set up the REST server
@@ -175,17 +176,20 @@ server.post("/password-check", async (req, res, next) => {
         username: req.params.username,
         message: "Could not find user",
       };
-    } else if (
-      user.username === req.params.username &&
-      user.password === req.params.password
-    ) {
-      checked = { check: true, username: user.username };
     } else {
-      checked = {
-        check: false,
-        username: req.params.username,
-        message: "Incorrect password",
-      };
+      let pwcheck = false;
+      if (user.username === req.params.username) {
+        pwcheck = await bcrypt.compare(req.params.password, user.password);
+        if (pwcheck) {
+          checked = { check: true, username: user.username };
+        } else {
+          checked = {
+            check: false,
+            username: req.params.username,
+            message: "Incorrect username or password",
+          };
+        }
+      }
     }
     res.contentType = "json";
     res.send(checked);

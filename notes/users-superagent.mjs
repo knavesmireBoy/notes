@@ -1,8 +1,15 @@
 import { default as request } from "superagent";
 import util from "util";
 import url from "url";
-const URL = url.URL;
 import DBG from "debug";
+import { default as bcrypt } from 'bcrypt';
+   const saltRounds = 10;
+   async function hashpass(password) {
+     let salt = await bcrypt.genSalt(saltRounds);
+     let hashed = await bcrypt.hash(password, salt);
+     return hashed;
+}
+const URL = url.URL;
 const debug = DBG("notes:users-superagent");
 const error = DBG("notes:error-superagent");
 var authid = "them";
@@ -26,7 +33,7 @@ export async function create(
     .post(reqURL("/create-user"))
     .send({
       username,
-      password,
+      password: await hashpass(password),
       provider,
       familyName,
       givenName,
@@ -53,7 +60,7 @@ export async function update(
     .post(reqURL(`/update-user/${username}`))
     .send({
       username,
-      password,
+      password: await hashpass(password),
       provider,
       familyName,
       givenName,
@@ -89,7 +96,7 @@ export async function findOrCreate(profile) {
     .post(reqURL("/find-or-create"))
     .send({
       username: profile.id,
-      password: profile.password,
+      password: await hashpass(profile.password),
       provider: profile.provider,
       familyName: profile.familyName,
       givenName: profile.givenName,
