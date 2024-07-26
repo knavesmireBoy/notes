@@ -10,6 +10,8 @@ import * as http from "http";
 import { approotdir } from "./approotdir.mjs";
 import { default as DBG } from "debug";
 import dotenv from 'dotenv/config.js';
+import socketio from 'socket.io';
+import passportSocketIo from 'passport.socketio';
 import { useModel as useNotesModel } from "./models/notes-store.mjs";
 useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "memory")
   .then((store) => {})
@@ -35,9 +37,28 @@ import session from "express-session";
 import sessionFileStore from "session-file-store";
 const FileStore = sessionFileStore(session);
 export const sessionCookieName = "notescookie.sid";
+const sessionSecret = 'keyboard mouse';
+const sessionStore = new FileStore({ path: "sessions" });
 
 export const app = express();
-// view engine setup
+export const port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
+export const server = http.createServer(app);
+server.listen(port);
+server.on("error", onError);
+server.on("listening", onListening);
+server.on("request", (req, res) => {
+  debug(`${new Date().toISOString()} request ${req.method}
+${req.url}`);
+});
+export const io = socketio(server);
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,
+  key: sessionCookieName,
+  secret: sessionSecret,
+  store: sessionStore
+}));
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 hbs.registerPartials(path.join(__dirname, "partials"));
@@ -64,8 +85,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   session({
-    store: new FileStore({ path: "sessions" }),
-    secret: "keyboard mouse",
+    store: sessionStore,
+    secret: sessionSecret,
     resave: true,
     saveUninitialized: true,
     name: sessionCookieName,
@@ -105,15 +126,3 @@ app.use("/users", usersRouter);
 // catch 404 and forward to error handler
 app.use(handle404);
 app.use(basicErrorHandler);
-
-export const port = normalizePort(process.env.PORT || "3000");
-app.set("port", port);
-
-export const server = http.createServer(app);
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
-server.on("request", (req, res) => {
-  debug(`${new Date().toISOString()} request ${req.method}
-${req.url}`);
-});
