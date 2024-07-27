@@ -9,12 +9,17 @@ import { default as bodyParser } from "body-parser";
 import * as http from "http";
 import { approotdir } from "./approotdir.mjs";
 import { default as DBG } from "debug";
-import dotenv from 'dotenv/config.js';
-import socketio from 'socket.io';
-import passportSocketIo from 'passport.socketio';
+import dotenv from "dotenv/config.js";
+import socketio from "socket.io";
+import passportSocketIo from "passport.socketio";
 import { useModel as useNotesModel } from "./models/notes-store.mjs";
-useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "memory")
-  .then((store) => {})
+import { router as indexRouter, init as homeInit } from "./routes/index.mjs";
+import { router as notesRouter, init as notesInit } from "./routes/notes.mjs";
+useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "sequelize")
+  .then((store) => {
+    homeInit();
+    notesInit();
+  })
   .catch((error) => {
     onError({ code: "ENOTESSTORE", error });
   });
@@ -30,14 +35,13 @@ import {
   basicErrorHandler,
 } from "./appsupport.mjs";
 
-import { router as indexRouter } from "./routes/index.mjs";
-import { router as notesRouter } from "./routes/notes.mjs";
+
 import { router as usersRouter, initPassport } from "./routes/users.mjs";
 import session from "express-session";
 import sessionFileStore from "session-file-store";
 const FileStore = sessionFileStore(session);
 export const sessionCookieName = "notescookie.sid";
-const sessionSecret = 'keyboard mouse';
+const sessionSecret = "keyboard mouse";
 const sessionStore = new FileStore({ path: "sessions" });
 
 export const app = express();
@@ -52,12 +56,14 @@ server.on("request", (req, res) => {
 ${req.url}`);
 });
 export const io = socketio(server);
-io.use(passportSocketIo.authorize({
-  cookieParser: cookieParser,
-  key: sessionCookieName,
-  secret: sessionSecret,
-  store: sessionStore
-}));
+io.use(
+  passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: sessionCookieName,
+    secret: sessionSecret,
+    store: sessionStore,
+  })
+);
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -95,10 +101,6 @@ app.use(
 initPassport(app);
 
 app.use(
-  "/assets/vendor/bootstrap",
-  express.static(path.join(__dirname, "node_modules", "bootstrap", "dist"))
-);
-app.use(
   "/assets/vendor/jquery",
   express.static(path.join(__dirname, "node_modules", "jquery", "dist"))
 );
@@ -108,16 +110,16 @@ app.use(
     path.join(__dirname, "node_modules", "popper.js", "dist", "umd")
   )
 );
+app.use(
+  "/assets/vendor/bootstrap",
+  express.static(path.join(__dirname, "node_modules", "bootstrap", "dist"))
+);
 
 app.use(
   "/assets/vendor/feather-icons",
   express.static(path.join(__dirname, "node_modules", "feather-icons", "dist"))
 );
 
-app.use(
-  "/assets/vendor/bootstrap",
-  express.static(path.join(__dirname, "theme", "dist"))
-);
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);

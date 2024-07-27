@@ -1,6 +1,8 @@
+import EventEmitter from 'events';
 const _note_key = Symbol("key");
 const _note_title = Symbol("title");
 const _note_body = Symbol("body");
+
 export class Note {
   constructor(key, title, body) {
     this[_note_key] = key.trim();
@@ -47,12 +49,16 @@ export class Note {
   }
 }
 
-export class AbstractNotesStore {
-  async close() {}
-  async update(key, title, body) {}
-  async create(key, title, body) {}
-  async read(key) {}
-  async destroy(key) {}
-  async keylist() {}
-  async count() {}
+export class AbstractNotesStore extends EventEmitter {
+  static store() { }
+  async close() { }
+  async update(key, title, body) { }
+  async create(key, title, body) { }
+  async read(key) { }
+  async destroy(key) { }
+  async keylist() { }
+  async count() { }
+  emitCreated(note) { this.emit('notecreated', note); }
+  emitUpdated(note) { this.emit('noteupdated', note); }
+  emitDestroyed(key) { this.emit('notedestroyed', key); }
 }

@@ -1,3 +1,4 @@
+import * as util from 'util';
 import { Note, AbstractNotesStore } from "./Notes.mjs";
 import Sequelize from "sequelize";
 import { connectDB as connectSequlz, close as closeSequlz } from "./sequlz.mjs";
@@ -31,25 +32,49 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
     closeSequlz();
     sequelize = undefined;
   }
+
   async update(key, title, body) {
     await connectDB();
     const note = await SQNote.findOne({ where: { notekey: key } });
     if (!note) {
       throw new Error(`No note found for ${key}`);
     } else {
-      await SQNote.update({ title, body }, { where: { notekey: key } });
-      return this.read(key);
+      await SQNote.update(
+        {
+          title: title,
+          body: body,
+        },
+        {
+          where: { notekey: key },
+        }
+      );
+      let note = await this.read(key);
+      debug(`UPDATE ${util.inspect(note)}`);
+      this.emitUpdated(note);
+      return note;
     }
   }
+
   async create(key, title, body) {
     await connectDB();
     const sqnote = await SQNote.create({
       notekey: key,
-      title,
-      body,
+      title: title,
+      body: body,
     });
-    return new Note(sqnote.notekey, sqnote.title, sqnote.body);
+    let note = new Note(sqnote.notekey, sqnote.title, sqnote.body);
+    debug(`CREATE ${util.inspect(note)}`);
+    this.emitCreated(note);
+    return note;
   }
+
+  async destroy(key) {
+    await connectDB();
+    await SQNote.destroy({ where: { notekey: key } });
+    debug(`DESTROY ${key}`);
+    this.emitDestroyed(key);
+  }
+
   async read(key) {
     await connectDB();
     const note = await SQNote.findOne({ where: { notekey: key } });
@@ -59,10 +84,7 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
       return new Note(note.notekey, note.title, note.body);
     }
   }
-  async destroy(key) {
-    await connectDB();
-    await SQNote.destroy({ where: { notekey: key } });
-  }
+
   async keylist() {
     await connectDB();
     const notes = await SQNote.findAll({ attributes: ["notekey"] });
