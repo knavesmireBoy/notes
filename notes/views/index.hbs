@@ -12,12 +12,12 @@
  <script src="/socket.io/socket.io.js"></script>
    <script>
    $(document).ready(function () {
-     var socket = io('http://127.0.0.1:3000');
+     //var socket = io('http://127.0.0.1:3000');
+     var socket = io('/');
      socket.on('connect', function (socket) {
          console.log('socketio connection on /home');
      });
      socket.on('notetitles', function(data) {
-      console.log(99);
        var notelist = data.notelist;
        $('#notetitles').empty();
        for (var i = 0; i < notelist.length; i++) {

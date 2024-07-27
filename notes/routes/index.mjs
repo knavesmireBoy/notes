@@ -31,7 +31,6 @@ async function getKeyTitlesList() {
 }
 const emitNoteTitles = async () => {
   const notelist = await getKeyTitlesList();
-  console.log('so emit alrweady');
   //io.of('/').emit('notetitles', { notelist });
   io.emit('notetitles', { notelist });
 };
