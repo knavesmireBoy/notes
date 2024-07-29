@@ -28,6 +28,24 @@ export function init() {
     emitNoteTitles();
   });
 }
+  io.of("/notes").on("connect", (socket) => {
+    if (socket.handshake.query.key) {
+      socket.join(socket.handshake.query.key);
+    }
+  });
+  notes.on("noteupdated", (note) => {
+    const toemit = {
+      key: note.key,
+      title: note.title,
+      body: note.body,
+    };
+    io.of("/notes").to(note.key).emit("noteupdated", toemit);
+    emitNoteTitles();
+  });
+  notes.on("notedestroyed", (key) => {
+    io.of("/notes").to(key).emit("notedestroyed", key);
+    emitNoteTitles();
+  });
 
 // Add Note.
 router.get("/add", ensureAuthenticated, (req, res, next) => {
@@ -36,6 +54,9 @@ router.get("/add", ensureAuthenticated, (req, res, next) => {
     docreate: true,
     notekey: "",
     note: undefined,
+    user: req.user,
+    note: undefined,
+    twitterLogin: twitterLogin,
     user: req.user,
     note: undefined,
     twitterLogin: twitterLogin,
@@ -74,6 +95,7 @@ router.get("/view", async (req, res, next) => {
       note: note,
       user: req.user ? req.user : undefined,
       twitterLogin: twitterLogin,
+      twitterLogin: twitterLogin,
     });
   } catch (err) {
     next(err);
@@ -85,6 +107,7 @@ router.get("/edit", ensureAuthenticated, async (req, res, next) => {
   try {
     const k = req.query.key.trim(),
       note = await notes.read(k);
+      note = await notes.read(k);
 
     res.render("noteedit", {
       title: note ? "Edit " + note.title : "Add a Note",
@@ -92,6 +115,7 @@ router.get("/edit", ensureAuthenticated, async (req, res, next) => {
       notekey: k,
       note: note,
       user: req.user,
+      twitterLogin: twitterLogin,
       twitterLogin: twitterLogin,
     });
   } catch (err) {
@@ -108,6 +132,7 @@ router.get("/destroy", ensureAuthenticated, async (req, res, next) => {
       notekey: req.query.key,
       note: note,
       user: req.user,
+      twitterLogin: twitterLogin,
       twitterLogin: twitterLogin,
     });
   } catch (err) {
