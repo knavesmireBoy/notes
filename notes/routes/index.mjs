@@ -29,7 +29,7 @@ async function getKeyTitlesList() {
     return { key: note.key, title: note.title };
   });
 }
-const emitNoteTitles = async () => {
+export const emitNoteTitles = async () => {
   const notelist = await getKeyTitlesList();
   //io.of('/').emit('notetitles', { notelist });
   io.emit('notetitles', { notelist });
